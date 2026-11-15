@@ -7,15 +7,13 @@ jobs:
   build:
     runs-on: macos-26
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      - name: Unzip project
+      - name: Prepare project
         run: |
           unzip zid_alma_ios_project.zip -d project
           cd project
@@ -33,3 +31,11 @@ jobs:
             -destination 'generic/platform=iOS' \
             CODE_SIGNING_ALLOWED=NO \
             build
+
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zed-alma-ios-build
+          path: project/ios/App/build/
+          if-no-files-found: warn
